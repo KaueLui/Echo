@@ -20,8 +20,6 @@ const Bottombar = () => {
                   </Link>
               )
           })}
-
-
     </section>
   )
 }
