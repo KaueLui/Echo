@@ -42,7 +42,7 @@ const PostForm = ({ post }: PostFormProps) => {
           userId: user.id,
         });
   
-        if (newPost !== undefined) {
+        if (!newPost) {
           toast({
             title: 'Post failed',
           });
