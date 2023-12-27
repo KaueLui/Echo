@@ -23,8 +23,7 @@ export async function createUserAccount(user: INewUser) {
             imageUrl: avatarUrl,
         })
 
-        return newAccount;
-
+        return newUser;
     } catch (error) {
         console.log(error);
         return error;
