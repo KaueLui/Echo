@@ -1,21 +1,18 @@
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
 import * as z from "zod"
+import { Models } from "appwrite"
+import { useForm } from "react-hook-form"
+import { useNavigate } from "react-router-dom"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "../ui/textarea"
 import FileUploader from "../shared/FileUploader"
 import { PostValidation } from "@/lib/validation"
-import { Models } from "appwrite"
+import { useCreatePost } from "@/lib/react-query/queriesAndMutations"
+import { useUserContext } from "@/context/AuthContext"
+import { useToast } from "../ui/use-toast"
 
 
 type PostFormProps = {
@@ -23,24 +20,35 @@ type PostFormProps = {
 }
 
 const PostForm = ({ post }: PostFormProps) => {
-    // 1. Define your form.
+    const { mutateAsync: createPost, isPending: isLoadingCreate } = useCreatePost();
+    const { toast } = useToast();
+    const navigate = useNavigate();
+    const { user } = useUserContext();
     const form = useForm<z.infer<typeof PostValidation>>({
         resolver: zodResolver(PostValidation),
         defaultValues: {
-            // username: "",
             caption: post ? post?.caption : "",
             file: [],
-            location: post ? post?.location : "",
-            tags: post ? post.tags.join(',') : ''
-        },
-    })
+            location: post ? post.location : "",
+            tags: post ? post.tags.join(",") : "",
+          },
+        });
 
     // 2. Define a submit handler.
-    function onSubmit(values: z.infer<typeof PostValidation>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values)
-    }
+    async function onSubmit(values: z.infer<typeof PostValidation>) {
+      const newPost = await createPost({
+        ...values,
+        userId: user.id,
+      });
+
+      if (!newPost) {
+        toast({
+          title: 'Post failed',
+        });
+      }
+    navigate("/");
+    };
+    
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-9 w-full max-w-5x1">

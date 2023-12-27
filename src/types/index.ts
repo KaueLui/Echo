@@ -47,6 +47,6 @@ export type INavLink = {
     password: string;
   };
 
-  export type IContextType = {
+  // export type IContextType = {
 
-  };
+  // };
