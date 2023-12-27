@@ -24,31 +24,33 @@ const PostForm = ({ post }: PostFormProps) => {
     const { toast } = useToast();
     const navigate = useNavigate();
     const { user } = useUserContext();
+    
     const form = useForm<z.infer<typeof PostValidation>>({
         resolver: zodResolver(PostValidation),
         defaultValues: {
-            caption: post ? post?.caption : "",
-            file: [],
-            location: post ? post.location : "",
-            tags: post ? post.tags.join(",") : "",
-          },
-        });
-
-    // 2. Define a submit handler.
-    async function onSubmit(values: z.infer<typeof PostValidation>) {
-      const newPost = await createPost({
-        ...values,
-        userId: user.id,
+          caption: post ? post?.caption : "",
+          file: [],
+          location: post ? post?.location : "",
+          tags: post ? post.tags.join(",") : "",
+        },
       });
 
-      if (!newPost) {
-        toast({
-          title: 'Post failed',
-        });
-      }
+    // 2. Define a submit handler.
+   async function onSubmit(values: z.infer<typeof PostValidation>) {
+    const newPost = await createPost({
+      ...values,
+      userId: user.id,
+    });
+
+    if (!newPost) {
+      toast({
+        title: "Please try again",
+      });
+    }
+
     navigate("/");
-    };
-    
+  }
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-9 w-full max-w-5x1">
@@ -73,10 +75,10 @@ const PostForm = ({ post }: PostFormProps) => {
                         <FormItem>
                             <FormLabel className="shad-form_label">Add Photos</FormLabel>
                             <FormControl>
-                              <FileUploader
-                                fieldChange={field.onChange}
-                                mediaUrl={post?.imageUrl}
-                              />
+                                <FileUploader
+                                    fieldChange={field.onChange}
+                                    mediaUrl={post?.imageUrl}
+                                />
                             </FormControl>
                             <FormMessage className="shad-form_message" />
                         </FormItem>
@@ -90,7 +92,7 @@ const PostForm = ({ post }: PostFormProps) => {
                         <FormItem>
                             <FormLabel className="shad-form_label">Add Location</FormLabel>
                             <FormControl>
-                              <Input type="text" className="shad-input" {...field} />
+                                <Input type="text" className="shad-input" {...field} />
                             </FormControl>
                             <FormMessage className="shad-form_message" />
                         </FormItem>
@@ -104,17 +106,17 @@ const PostForm = ({ post }: PostFormProps) => {
                         <FormItem>
                             <FormLabel className="shad-form_label">Add Tags (separeted by comma ' , ' )</FormLabel>
                             <FormControl>
-                              <Input type="text" className="shad-input" placeholder="Art, Music, Learn"  {...field} />
+                                <Input type="text" className="shad-input" placeholder="Art, Music, Learn"  {...field} />
                             </FormControl>
                             <FormMessage className="shad-form_message" />
                         </FormItem>
                     )}
                 />
                 <div className="flex gap-4 items-center justify-end ">
-                <Button type="button" className="shad-button_dark_4">Cancel</Button>
-                <Button type="submit" className="shad-button_primary whitespace-nowrap">Submit</Button>
+                    <Button type="button" className="shad-button_dark_4">Cancel</Button>
+                    <Button type="submit" className="shad-button_primary whitespace-nowrap">Submit</Button>
                 </div>
-                
+
             </form>
         </Form>
     )
