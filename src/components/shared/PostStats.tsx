@@ -1,3 +1,4 @@
+
 import { useDeleteSavedPost, useGetCurrentUser, useLikePost, useSavePost } from "@/lib/react-query/queriesAndMutations";
 import { checkIsLiked } from "@/lib/utils";
 import { Models } from "appwrite";
@@ -20,6 +21,14 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
 
     const { data: currentUser } = useGetCurrentUser();
 
+    const savedPostRecord = currentUser?.save?.find(
+        (record: Models.Document) => record.post.$id === post.$id
+      );
+      
+      useEffect(() => {
+        setIsSaved(!!savedPostRecord);
+      }, [currentUser?.save]);
+
     // Like posts
     const handleLikePost = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -37,7 +46,9 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
     // Save post
     const handleSavePost = (e: React.MouseEvent) => {
         e.stopPropagation();
-        const savedPostRecord = currentUser?.save.find((record: Models.Document) => record.$id === post.$id);
+        //const savedPostRecord = currentUser?.save.find((record: Models.Document) => record.$id === post.$id);
+
+         //const savedPostRecord = currentUser?.save.find((record: Models.Document) => record.post$id === post.$id);
        
         if(savedPostRecord) {
             setIsSaved(false);

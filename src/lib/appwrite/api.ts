@@ -52,7 +52,7 @@ export async function saveUserToDB(user: {
     }
 }
 
-export async function signInAccount(user: {email: string; password: string; }) {
+export async function signInAccount(user: { email: string; password: string; }) {
     try {
         const session = await account.createEmailSession(user.email, user.password);
 
@@ -65,14 +65,14 @@ export async function signInAccount(user: {email: string; password: string; }) {
 export async function getCurrentUser() {
     try {
         const currentAccount = await account.get();
-        if(!currentAccount) throw Error;
+        if (!currentAccount) throw Error;
 
         const currentUser = await databases.listDocuments(
             appwriteConfig.databaseId,
             appwriteConfig.userCollectionId,
             [Query.equal('accountId', currentAccount.$id)]
         )
-        if(!currentUser) throw Error;
+        if (!currentUser) throw Error;
         return currentUser.documents[0];
 
     } catch (error) {
@@ -88,26 +88,26 @@ export async function signOutAccount() {
     } catch (error) {
         console.log(error);
     }
-    
+
 }
 
-export async function createPost(post:INewPost) {
+export async function createPost(post: INewPost) {
     try {
         //Upload Image
         const uploadedFile = await uploadFile(post.file[0]);
-      if (!uploadedFile) throw Error;
+        if (!uploadedFile) throw Error;
 
-      const fileUrl = getFilePreview(uploadedFile.$id);
-        if(!fileUrl) { 
+        const fileUrl = getFilePreview(uploadedFile.$id);
+        if (!fileUrl) {
             await deleteFile(uploadedFile.$id);
-            throw Error; 
+            throw Error;
         }
 
 
         const tags = post.tags?.replace(/ /g, "").split(",") || [];
 
         //Save post 
-        
+
         const newPost = await databases.createDocument(
             appwriteConfig.databaseId,
             appwriteConfig.postCollectionId,
@@ -122,7 +122,7 @@ export async function createPost(post:INewPost) {
             }
         )
 
-        if(!newPost){
+        if (!newPost) {
             await deleteFile(uploadedFile.$id)
             throw Error;
         }
@@ -130,10 +130,10 @@ export async function createPost(post:INewPost) {
         return newPost;
     } catch (error) {
         console.log(error);
-    }    
+    }
 }
 
-export async function uploadFile(file:File) {
+export async function uploadFile(file: File) {
     try {
         const uploadFile = await storage.createFile(
             appwriteConfig.storageId,
@@ -145,10 +145,10 @@ export async function uploadFile(file:File) {
     } catch (error) {
         console.log(error);
     }
-    
+
 }
 
-export function getFilePreview(fileId:string) {
+export function getFilePreview(fileId: string) {
     try {
         const fileUrl = storage.getFilePreview(
             appwriteConfig.storageId,
@@ -157,26 +157,26 @@ export function getFilePreview(fileId:string) {
             2000,
             "top",
             100
-          );
+        );
 
         return fileUrl;
     } catch (error) {
         console.log(error);
     }
-    
+
 }
 
-export async function deleteFile(fileId:string) {
+export async function deleteFile(fileId: string) {
     try {
         await storage.deleteFile(appwriteConfig.storageId, fileId)
 
-        return {status: 'ok'}
+        return { status: 'ok' }
     } catch (error) {
         console.log(error);
     }
 }
 
-export async function getRecentPosts(){
+export async function getRecentPosts() {
     const posts = await databases.listDocuments(
         appwriteConfig.databaseId,
         appwriteConfig.postCollectionId,
@@ -188,7 +188,7 @@ export async function getRecentPosts(){
     return posts;
 }
 
-export async function likePost(postId: string, likesArray:string[]) {
+export async function likePost(postId: string, likesArray: string[]) {
     try {
         const updatedPost = await databases.updateDocument(
             appwriteConfig.databaseId,
@@ -199,15 +199,15 @@ export async function likePost(postId: string, likesArray:string[]) {
             }
         )
 
-            if(!updatedPost) throw Error;
+        if (!updatedPost) throw Error;
 
-            return updatedPost;
+        return updatedPost;
     } catch (error) {
         console.log(error);
     }
 }
 
-export async function savePost(postId: string, userId:string) {
+export async function savePost(userId: string, postId: string) {
     try {
         const updatedPost = await databases.createDocument(
             appwriteConfig.databaseId,
@@ -217,11 +217,11 @@ export async function savePost(postId: string, userId:string) {
                 user: userId,
                 post: postId,
             }
-        )
+        );
 
-            if(!updatedPost) throw Error;
+        if (!updatedPost) throw Error;
 
-            return updatedPost;
+        return updatedPost;
     } catch (error) {
         console.log(error);
     }
@@ -235,9 +235,9 @@ export async function deleteSavePost(savedRecordId: string) {
             savedRecordId,
         )
 
-            if(!statusCode) throw Error;
+        if (!statusCode) throw Error;
 
-            return { status: 'ok'}
+        return { status: 'ok' }
     } catch (error) {
         console.log(error);
     }
