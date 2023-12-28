@@ -1,3 +1,4 @@
+import ExploreDetails from "@/components/ExplodeDetails";
 import Loader from "@/components/shared/Loader";
 import PostStats from "@/components/shared/PostStats";
 import { Button } from "@/components/ui/button";
@@ -91,7 +92,7 @@ const PostDetails = () => {
           </div>
         </div>
       )}
-      
+      <ExploreDetails />
     </div>
   )
 }
