@@ -1,4 +1,3 @@
-
 import { useDeleteSavedPost, useGetCurrentUser, useLikePost, useSavePost } from "@/lib/react-query/queriesAndMutations";
 import { checkIsLiked } from "@/lib/utils";
 import { Models } from "appwrite";
@@ -80,7 +79,7 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
                     width={20}
                     height={20}
                     className="cursor-pointer"
-                     onClick={handleSavePost}
+                    onClick={handleSavePost}
                 /> 
                  }
             </div>
